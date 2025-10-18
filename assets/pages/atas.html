@@ -1,0 +1,163 @@
+<div class="container page-content">
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h1 class="text-3xl font-bold text-center mb-2" style="color: var(--cor-primaria);">Atas de Reunião</h1>
+        <!-- Filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div>
+                <label for="filter-status" class="block text-sm font-medium text-gray-700">Filtrar por Status</label>
+                <select id="filter-status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                    <option value="">Todos os Status</option>
+                    <option value="informativo">Informativo</option>
+                    <option value="aberto">Aberto</option>
+                    <option value="critico">Crítico</option>
+                    <option value="fechado">Fechado</option>
+                </select>
+            </div>
+            <div>
+                <label for="filter-tema" class="block text-sm font-medium text-gray-700">Filtrar por Tema</label>
+                <select id="filter-tema" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                    <option value="">Todos os Temas</option>
+                    <option value="Contrato">Contrato</option>
+                    <option value="Qualidade">Qualidade</option>
+                    <option value="Segurança">Segurança</option>
+                    <option value="Meio Ambiente">Meio Ambiente</option>
+                    <option value="Obra">Obra</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button id="apply-filters-btn" class="w-full btn-add px-4 py-2 rounded-md font-medium shadow-sm">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 class="text-lg font-semibold text-blue-800">Atendimento da Construtora</h3>
+                <p class="text-3xl font-bold text-blue-600" id="kpi-construtora">0%</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h3 class="text-lg font-semibold text-green-800">Itens Fechados</h3>
+                <p class="text-3xl font-bold text-green-600" id="kpi-fechados">0</p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h3 class="text-lg font-semibold text-purple-800">Tempo Médio de Atendimento</h3>
+                <p class="text-3xl font-bold text-purple-600" id="kpi-tempo">0 dias</p>
+            </div>
+        </div>
+        <!-- Botão para adicionar nova linha -->
+        <div class="flex justify-end mb-4">
+            <button id="add-row-btn" class="btn-add px-4 py-2 rounded-md font-medium shadow-sm">
+                Adicionar Nova Linha
+            </button>
+        </div>
+        <!-- Tabela de Atas -->
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table id="atas-table" class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-12">ID</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descrição</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Tema</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-40">Responsável</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-28">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Abertura</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Fechamento</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="atas-table-body">
+                    <tr>
+                        <td class="px-4 py-3 text-sm font-medium text-gray-900 text-center">1</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 descricao-cell">
+                            <span class="descricao-text">Problemas na fundação da estaca 01. Este é um exemplo de texto longo que deve quebrar corretamente dentro do campo sem invadir outras colunas.</span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="tema-text">Qualidade</span>
+                            <select class="tema-select hidden w-full p-1 border rounded">
+                                <option value="Contrato">Contrato</option>
+                                <option value="Qualidade" selected>Qualidade</option>
+                                <option value="Segurança">Segurança</option>
+                                <option value="Meio Ambiente">Meio Ambiente</option>
+                                <option value="Obra">Obra</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="responsavel-text">Ana Oliveira</span>
+                            <input type="text" class="responsavel-input w-full p-1 border rounded hidden" value="Ana Oliveira">
+                        </td>
+                        <td class="px-4 py-3 text-sm whitespace-nowrap">
+                            <span class="status-text status-critico">Crítico</span>
+                            <select class="status-select hidden w-full p-1 border rounded">
+                                <option value="informativo">Informativo</option>
+                                <option value="aberto">Aberto</option>
+                                <option value="critico" selected>Crítico</option>
+                                <option value="fechado">Fechado</option>
+                            </select>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="data-abertura-text">2024-11-01</span>
+                            <input type="date" class="data-abertura-input hidden w-full p-1 border rounded" value="2024-11-01">
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="data-fechamento-text">-</span>
+                            <input type="date" class="data-fechamento-input hidden w-full p-1 border rounded">
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <button class="btn-edit px-2 py-1 rounded text-xs mr-1">Editar</button>
+                            <button class="btn-save px-2 py-1 rounded text-xs mr-1 hidden">Salvar</button>
+                            <button class="btn-cancel px-2 py-1 rounded text-xs mr-1 hidden">Cancelar</button>
+                            <button class="btn-remove px-2 py-1 rounded text-xs">Remover</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-3 text-sm font-medium text-gray-900 text-center">2</td>
+                        <td class="px-4 py-3 text-sm text-gray-500 descricao-cell">
+                            <span class="descricao-text">Atraso na entrega de materiais. Outro exemplo de texto longo que deve permanecer dentro do campo de descrição.</span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="tema-text">Contrato</span>
+                            <select class="tema-select hidden w-full p-1 border rounded">
+                                <option value="Contrato" selected>Contrato</option>
+                                <option value="Qualidade">Qualidade</option>
+                                <option value="Segurança">Segurança</option>
+                                <option value="Meio Ambiente">Meio Ambiente</option>
+                                <option value="Obra">Obra</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="responsavel-text">Pedro Costa</span>
+                            <input type="text" class="responsavel-input w-full p-1 border rounded hidden" value="Pedro Costa">
+                        </td>
+                        <td class="px-4 py-3 text-sm whitespace-nowrap">
+                            <span class="status-text status-aberto">Aberto</span>
+                            <select class="status-select hidden w-full p-1 border rounded">
+                                <option value="informativo">Informativo</option>
+                                <option value="aberto" selected>Aberto</option>
+                                <option value="critico">Crítico</option>
+                                <option value="fechado">Fechado</option>
+                            </select>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="data-abertura-text">2024-11-05</span>
+                            <input type="date" class="data-abertura-input hidden w-full p-1 border rounded" value="2024-11-05">
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <span class="data-fechamento-text">-</span>
+                            <input type="date" class="data-fechamento-input hidden w-full p-1 border rounded">
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                            <button class="btn-edit px-2 py-1 rounded text-xs mr-1">Editar</button>
+                            <button class="btn-save px-2 py-1 rounded text-xs mr-1 hidden">Salvar</button>
+                            <button class="btn-cancel px-2 py-1 rounded text-xs mr-1 hidden">Cancelar</button>
+                            <button class="btn-remove px-2 py-1 rounded text-xs">Remover</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
