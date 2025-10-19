@@ -6,8 +6,268 @@
     <title>Sistema de Gestão de Obras - Contrapartida Viária Av. do Metrô</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <!-- REMOVIDO: <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script> -->
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        :root {
+            --cor-primaria: #01455C;
+            --cor-secundaria: #9FC419;
+            --cor-texto-claro: #ffffff;
+            --cor-texto-escuro: #333;
+            --cor-fundo: #f0f2f5;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto-escuro);
+        }
+        header {
+            background-color: var(--cor-primaria);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--cor-texto-claro);
+        }
+        nav ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--cor-texto-claro);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        nav a.active, nav a:hover {
+            color: var(--cor-secundaria);
+        }
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--cor-secundaria);
+        }
+        #landing-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px - 75px);
+            padding: 2rem;
+            text-align: center;
+        }
+        .hero {
+            max-width: 800px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--cor-primaria);
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: var(--cor-secundaria);
+            color: var(--cor-primaria);
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 0.8rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(159, 196, 25, 0.4);
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 20px;
+        }
+        .page-content h1 {
+            color: var(--cor-primaria);
+        }
+        .google-visualization-tooltip {
+            border: 1px solid #ccc !important;
+            border-radius: 8px !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+            padding: 10px !important;
+            background-color: white !important;
+        }
+        .edit-btn {
+            background: none;
+            border: none;
+            color: var(--cor-primaria);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+            margin-left: 8px;
+        }
+        .edit-btn:hover {
+            color: var(--cor-secundaria);
+        }
+        .status-informativo { background-color: #d1d5db; color: #374151; }
+        .status-aberto { background-color: #f87171; color: white; }
+        .status-critico { background-color: #ef4444; color: white; }
+        .status-fechado { background-color: #4ade80; color: white; }
+        .btn-add {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-primaria);
+        }
+        .btn-add:hover {
+            background-color: #8ab717;
+        }
+        .btn-remove {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-remove:hover {
+            background-color: #dc2626;
+        }
+        .btn-edit {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #2563eb;
+        }
+        .btn-save {
+            background-color: #10b981;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #059669;
+        }
+        .btn-cancel {
+            background-color: #9ca3af;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #6b7280;
+        }
+        /* Modal de Edição de Descrição */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .modal-body {
+            padding: 1.5rem;
+            flex: 1;
+            overflow: auto;
+        }
+        .modal-body textarea {
+            width: 100%;
+            height: 200px;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f9fafb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        /* Tabela inteligente e responsiva */
+        #atas-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        #atas-table th,
+        #atas-table td {
+            vertical-align: top;
+        }
+        #atas-table .descricao-cell {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }
+        /* Otimização para impressão */
+        @media print {
+            body {
+                background-color: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .container {
+                max-width: none !important;
+                padding: 10px !important;
+            }
+            #atas-table {
+                font-size: 12px !important;
+            }
+            #atas-table th,
+            #atas-table td {
+                padding: 6px 8px !important;
+            }
+            .page-content > div {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+            }
+            #atas-table tbody tr {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
     <header>
@@ -24,8 +284,7 @@
             </ul>
         </nav>
     </header>
-    <main id="main-content">
-        <!-- O conteúdo das páginas será carregado aqui dinamicamente -->
+    <main>
         <section id="landing-page" class="container">
             <div class="hero">
                 <h1>Sistema de Gestão de Obras</h1>
@@ -36,15 +295,198 @@
                 <a id="cta-button" class="cta-button">Aceder aos Painéis</a>
             </div>
         </section>
-        <!-- As outras páginas (divs) agora estão em arquivos HTML separados -->
+        <div id="atas-page" class="container page-content" style="display: none;">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-center mb-2" style="color: var(--cor-primaria);">Atas de Reunião</h1>
+                <!-- Filtros -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="filter-status" class="block text-sm font-medium text-gray-700">Filtrar por Status</label>
+                        <select id="filter-status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                            <option value="">Todos os Status</option>
+                            <option value="informativo">Informativo</option>
+                            <option value="aberto">Aberto</option>
+                            <option value="critico">Crítico</option>
+                            <option value="fechado">Fechado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-tema" class="block text-sm font-medium text-gray-700">Filtrar por Tema</label>
+                        <select id="filter-tema" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                            <option value="">Todos os Temas</option>
+                            <option value="Contrato">Contrato</option>
+                            <option value="Qualidade">Qualidade</option>
+                            <option value="Segurança">Segurança</option>
+                            <option value="Meio Ambiente">Meio Ambiente</option>
+                            <option value="Obra">Obra</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="apply-filters-btn" class="w-full btn-add px-4 py-2 rounded-md font-medium shadow-sm">
+                            Aplicar Filtros
+                        </button>
+                    </div>
+                </div>
+                <!-- KPIs -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-semibold text-blue-800">Atendimento da Construtora</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="kpi-construtora">0%</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 class="text-lg font-semibold text-green-800">Itens Fechados</h3>
+                        <p class="text-3xl font-bold text-green-600" id="kpi-fechados">0</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                        <h3 class="text-lg font-semibold text-purple-800">Tempo Médio de Atendimento</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="kpi-tempo">0 dias</p>
+                    </div>
+                </div>
+                <!-- Botão para adicionar nova linha -->
+                <div class="flex justify-end mb-4">
+                    <button id="add-row-btn" class="btn-add px-4 py-2 rounded-md font-medium shadow-sm">
+                        Adicionar Nova Linha
+                    </button>
+                </div>
+                <!-- Tabela de Atas -->
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table id="atas-table" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-12">ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descrição</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Tema</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-40">Responsável</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-28">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Abertura</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">Fechamento</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="atas-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- As linhas da tabela serão preenchidas pelo JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="projeto-page" class="container page-content" style="display: none;">
+            <h1>Projeto</h1>
+            <p>Em desenvolvimento. Área dedicada à visualização do projeto, incluindo o traçado da avenida e a locação das estacas.</p>
+        </div>
+        <div id="planejamento-page" class="container page-content" style="display: none;">
+             <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-center mb-2" style="color: var(--cor-primaria);">Planejamento de Atividade</h1>
+                 <div class="flex justify-center mb-6">
+                    <div class="w-full max-w-xs">
+                        <label for="control-date" class="block text-sm font-medium text-gray-700 text-center">Data de Controle</label>
+                        <input type="date" id="control-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end mb-6">
+                    <div class="md:col-span-2">
+                        <label for="task-name" class="block text-sm font-medium text-gray-700">Nome da Tarefa</label>
+                        <input type="text" id="task-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="start-date" class="block text-sm font-medium text-gray-700">Início</label>
+                        <input type="date" id="start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="task-duration" class="block text-sm font-medium text-gray-700">Duração (dias)</label>
+                        <input type="number" id="task-duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" min="0">
+                    </div>
+                     <div class="flex items-end gap-2">
+                        <div class="flex-grow">
+                            <label for="task-dependency" class="block text-sm font-medium text-gray-700">Predecessora (ID)</label>
+                            <input type="text" id="task-dependency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                        </div>
+                        <div>
+                            <label for="task-dependency-type" class="block text-sm font-medium text-gray-700">Tipo</label>
+                            <select id="task-dependency-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+                                <option>TI</option>
+                                <option>TT</option>
+                                <option>II</option>
+                                <option>IT</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="task-cost" class="block text-sm font-medium text-gray-700">Custo (R$)</label>
+                        <input type="number" id="task-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" min="0" step="0.01">
+                    </div>
+                     <div>
+                        <label for="task-progress" class="block text-sm font-medium text-gray-700">Avanço Real (%)</label>
+                        <input type="number" id="task-progress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" min="0" max="100">
+                    </div>
+                </div>
+                 <div class="flex justify-end mb-6">
+                    <button id="add-task-btn" class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm" style="background-color: var(--cor-primaria);">Adicionar Tarefa</button>
+                    <button id="edit-task-btn" class="inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm ml-2" style="background-color: #FFA500; display: none;">Salvar Edição</button>
+                </div>
+                <h2 class="text-xl font-semibold mb-3" style="color: var(--cor-primaria);">Lista de Atividades</h2>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome da Tarefa</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Início</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Término</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duração (dias)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Predecessora</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Custo (R$)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avanço Planejado (%)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avanço Real (%)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                <div class="flex items-center justify-end gap-4 mt-6">
+                    <button id="clear-btn" class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm">Limpar</button>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4 text-center" style="color: var(--cor-primaria);">Gráfico de Gantt</h2>
+                <div id="gantt-container"></div>
+            </div>
+        </div>
+        <div id="riscos-page" class="container page-content" style="display: none;">
+            <h1>Gestão de Riscos</h1>
+            <p>Em desenvolvimento...</p>
+        </div>
+        <div id="custos-page" class="container page-content" style="display: none;">
+            <h1>Controle de Custos</h1>
+            <p>Em desenvolvimento...</p>
+        </div>
+        <div id="gestao-cava-page" class="container page-content" style="display: none;">
+            <h1>Gestão Cava</h1>
+            <p>Em desenvolvimento...</p>
+        </div>
     </main>
     <footer class="bg-white text-center p-4 mt-8">
         <p class="text-sm text-gray-600">Sistema de Gestão de Obras © 2025</p>
     </footer>
-    <div id="descricao-modal-placeholder"></div> <!-- Placeholder para o modal -->
+    <!-- Modal de Edição de Descrição -->
+    <div id="descricao-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">Editar Descrição</div>
+            <div class="modal-body">
+                <textarea id="modal-descricao-input" placeholder="Digite a descrição completa..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel-btn" class="btn-cancel px-4 py-2 rounded text-sm">Cancelar</button>
+                <button id="modal-save-btn" class="btn-save px-4 py-2 rounded text-sm">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts JS MODULARES -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/atas.js"></script>
     <script src="assets/js/planejamento.js"></script>
-    <script src="assets/js/paginas.js"></script>
 </body>
 </html>
