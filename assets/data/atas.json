@@ -1,0 +1,21 @@
+[
+  {
+    "ID": 1,
+    "Descricao": "Problemas na fundação da estaca 01",
+    "Tema": "Qualidade",
+    "Responsavel": "Ana Oliveira",
+    "Status": "critico",
+    "DataAbertura": "2024-11-01",
+    "DataFechamento": "-"
+  },
+  {
+    "ID": 2,
+    "Descricao": "Atraso na entrega de materiais",
+    "Tema": "Contrato",
+    "Responsavel": "Pedro Costa",
+    "Status": "aberto",
+    "DataAbertura": "2024-11-05",
+    "DataFechamento": "-"
+  }
+  // ... mais itens conforme necessário
+]
