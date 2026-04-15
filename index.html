@@ -1,50 +1,1571 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão de Obras - Contrapartida Viária Av. do Metrô</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <!-- REMOVIDO: <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script> -->
-    <link rel="stylesheet" href="assets/css/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Timeline Editor Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --secondary: #64748b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --border-focus: #4f46e5;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0 }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--text-primary);
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 24px 32px;
+  color: white;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header p {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+/* Toolbar */
+.tlbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px 32px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.tlbar-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tbtn:hover {
+  background: var(--bg-primary);
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.tbtn:active {
+  transform: translateY(0);
+}
+
+.tbtn.primary {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.tbtn.primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: white;
+}
+
+.tbtn.danger {
+  color: var(--danger);
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.tbtn.danger:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
+.tbtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tlbar-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tlbar-hint svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+/* Canvas Container */
+.scr {
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.scr::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scr::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.scr::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+}
+
+.scr::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+#cv {
+  display: block;
+}
+
+/* Controls Panel */
+.tctrl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 24px 32px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lbl {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lbl span {
+  font-weight: 400;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.fi, input[type="date"], input[type="text"], select {
+  width: 100%;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.fi:focus, input[type="date"]:focus, input[type="text"]:focus, select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+  box-shadow: var(--shadow);
+}
+
+/* Properties Panel */
+.pnl {
+  background: var(--bg-secondary);
+  padding: 32px;
+}
+
+.pnl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pnl-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pnl-title svg {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+}
+
+.pg {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.sect {
+  margin-bottom: 20px;
+}
+
+.sect:last-child {
+  margin-bottom: 0;
+}
+
+.pl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pl svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Icon Buttons */
+.ib {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.ib:hover {
+  background: var(--bg-primary);
+  border-color: var(--border-focus);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.ib.on {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.ib svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Color Pickers */
+.cr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: var(--radius);
+  transition: background 0.2s ease;
+}
+
+.cr:hover {
+  background: var(--bg-tertiary);
+}
+
+.cr span {
+  min-width: 90px;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.cr input[type="color"] {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 2px;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.cr input[type="color"]:hover {
+  border-color: var(--border-focus);
+  transform: scale(1.05);
+}
+
+.cr input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.cr input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+/* Size Controls */
+.szr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: var(--radius);
+}
+
+.szr:hover {
+  background: var(--bg-tertiary);
+}
+
+.szr span:first-child {
+  min-width: 70px;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.szr .sv {
+  min-width: 36px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* Text Area */
+.txted {
+  width: 100%;
+  min-height: 100px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+}
+
+.txted:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Empty State */
+#nsel {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 2px dashed var(--border);
+}
+
+#nsel svg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  width: 600px;
+  max-width: 90%;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.modal-content p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+#timelinesList {
+  list-style-type: none;
+  padding: 0;
+  margin: 16px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+#timelinesList li {
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#timelinesList li:last-child {
+  border-bottom: none;
+}
+
+#timelinesList li:hover {
+  background: var(--bg-tertiary);
+  color: var(--primary);
+}
+
+#timelinesList li::before {
+  content: '📊';
+  font-size: 16px;
+}
+
+#csvInput {
+  width: 100%;
+  height: 180px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  resize: vertical;
+  line-height: 1.5;
+}
+
+#csvInput:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+#uploadFile {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  width: 100%;
+  cursor: pointer;
+  background: var(--bg-tertiary);
+  transition: all 0.2s ease;
+}
+
+#uploadFile:hover {
+  border-color: var(--border-focus);
+  background: var(--primary-light);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: flex-end;
+}
+
+/* Footer */
+#footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border);
+}
+
+#footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+  
+  .header {
+    padding: 20px;
+  }
+  
+  .tlbar {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .tlbar-actions {
+    justify-content: center;
+  }
+  
+  .tctrl {
+    padding: 20px;
+    grid-template-columns: 1fr;
+  }
+  
+  .pnl {
+    padding: 20px;
+  }
+  
+  .pg {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading Animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+</style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <header>
-        <div class="logo">Gestão de Obras</div>
-        <nav>
-            <ul>
-                <li><a id="nav-home" class="active">Página Principal</a></li>
-                <li><a id="nav-atas">Atas de Reunião</a></li>
-                <li><a id="nav-projeto">Projeto</a></li>
-                <li><a id="nav-planejamento">Planejamento</a></li>
-                <li><a id="nav-riscos">Riscos</a></li>
-                <li><a id="nav-custos">Custos</a></li>
-                <li><a id="nav-gestao-cava">Gestão Cava</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main id="main-content">
-        <!-- O conteúdo das páginas será carregado aqui dinamicamente -->
-        <section id="landing-page" class="container">
-            <div class="hero">
-                <h1>Sistema de Gestão de Obras</h1>
-                <h2>Contrapartida Viária Avênida do Metrô</h2>
-                <p>
-                    Plataforma centralizada para o monitoramento e gestão de todas as frentes da obra. Navegue pelas guias para aceder a painéis de atas, planejamento, análise de riscos, controle de custos e gestão de cava.
-                </p>
-                <a id="cta-button" class="cta-button">Aceder aos Painéis</a>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+      Timeline Editor Pro
+    </h1>
+    <p>Crie e gerencie timelines profissionais de forma intuitiva</p>
+  </div>
+
+  <div class="tlbar">
+    <div class="tlbar-actions">
+      <button class="tbtn primary" onclick="addCard()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Novo Card
+      </button>
+      <button class="tbtn" onclick="createTimelineFromCard()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+        Criar TL do Card
+      </button>
+      <button class="tbtn" onclick="showTimelines()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+        Gerenciar Timelines
+      </button>
+      <button class="tbtn" onclick="importFromTable()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Importar CSV
+      </button>
+      <button class="tbtn" onclick="exportSVG()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Exportar SVG
+      </button>
+    </div>
+    <div class="tlbar-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      Arraste cards • Mova o eixo • Delete para remover
+    </div>
+  </div>
+
+  <div class="scr" id="scr"><canvas id="cv" style="display:block"></canvas></div>
+
+  <div class="tctrl">
+    <div class="ctrl-group">
+      <label class="lbl">Data Inicial</label>
+      <input type="date" id="md0" value="2019-01-01" oninput="updTL()">
+    </div>
+    <div class="ctrl-group">
+      <label class="lbl">Data Final</label>
+      <input type="date" id="md1" value="2027-01-01" oninput="updTL()">
+    </div>
+    <div class="ctrl-group">
+      <label class="lbl">Zoom &nbsp;<span id="zmv">1.0×</span></label>
+      <input type="range" id="zm" min="0.4" max="5" step="0.1" value="1" oninput="updZoom(+this.value)">
+    </div>
+    <div class="ctrl-group">
+      <label class="lbl">Posição Eixo &nbsp;<span id="ayv">220</span>px</label>
+      <input type="range" id="aysl" min="60" max="440" step="2" value="220" oninput="updAY(+this.value)">
+    </div>
+    <div class="ctrl-group">
+      <label class="lbl">Unidade de Tempo</label>
+      <select id="timeUnit" onchange="updTimeUnit(this.value)">
+        <option value="days">Dias</option>
+        <option value="months">Meses</option>
+        <option value="bimonthly">Bimestres</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="pnl">
+    <div id="nsel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <polyline points="21 15 16 10 5 21"></polyline>
+      </svg>
+      <p style="font-size: 14px; margin-bottom: 8px;">Nenhum card selecionado</p>
+      <p style="font-size: 13px;">Clique em um card na timeline para editar suas propriedades</p>
+    </div>
+    <div id="edt" style="display:none">
+      <div class="pnl-header">
+        <div class="pnl-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Propriedades do Card
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="tbtn danger" onclick="delCard()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Excluir
+          </button>
+          <button class="tbtn" onclick="desel()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Fechar
+          </button>
+        </div>
+      </div>
+      <div class="pg">
+        <div>
+          <div class="sect">
+            <div class="pl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              </svg>
+              Forma
             </div>
-        </section>
-        <!-- As outras páginas (divs) agora estão em arquivos HTML separados -->
-    </main>
-    <footer class="bg-white text-center p-4 mt-8">
-        <p class="text-sm text-gray-600">Sistema de Gestão de Obras © 2025</p>
-    </footer>
-    <div id="descricao-modal-placeholder"></div> <!-- Placeholder para o modal -->
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/atas.js"></script>
-    <script src="assets/js/planejamento.js"></script>
-    <script src="assets/js/paginas.js"></script>
+            <div style="display:flex;flex-wrap:wrap;gap:8px" id="sbg"></div>
+          </div>
+          <div class="sect">
+            <div class="pl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="3" x2="8" y2="21"></line>
+                <line x1="16" y1="3" x2="16" y2="21"></line>
+              </svg>
+              Conector
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px" id="cbg"></div>
+          </div>
+        </div>
+        <div>
+          <div class="pl">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 2a10 10 0 0 1 10 10"></path>
+            </svg>
+            Cores
+          </div>
+          <div class="cr"><span>Preenchimento</span><input type="color" id="fc" oninput="upd('fillColor',this.value)"></div>
+          <div class="cr"><span>Contorno</span><input type="color" id="sc" oninput="upd('strokeColor',this.value)"></div>
+          <div class="cr"><span>Texto</span><input type="color" id="tc" oninput="upd('textColor',this.value)"></div>
+          <div class="cr"><span>Conector</span><input type="color" id="cc" oninput="upd('connColor',this.value)"></div>
+        </div>
+        <div>
+          <div class="pl">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Conteúdo
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="lbl">ID</label>
+            <input type="text" id="eid" class="fi" readonly style="background:var(--bg-tertiary);color:var(--text-muted)">
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="lbl">Data</label>
+            <input type="date" id="ed" class="fi" oninput="updDate(this.value)">
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="lbl">Título</label>
+            <input type="text" id="el" class="fi" placeholder="Digite o título..." oninput="upd('l',this.value,'ev')">
+          </div>
+          <div style="margin-bottom:12px">
+            <label class="lbl">Descrição</label>
+            <input type="text" id="es" class="fi" placeholder="Breve descrição..." oninput="upd('s',this.value,'ev')">
+          </div>
+          <div>
+            <label class="lbl">Texto Longo</label>
+            <textarea id="et" class="txted" placeholder="Texto detalhado do evento..." oninput="upd('t',this.value,'ev')"></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="pl">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            Tamanho
+          </div>
+          <div class="szr"><span>Largura</span><input type="range" id="cwsl" min="60" max="240" step="2" value="110" style="flex:1" oninput="updSz('cw',+this.value,'cwv')"><span class="sv" id="cwv">110</span>px</div>
+          <div class="szr"><span>Altura</span><input type="range" id="chsl" min="50" max="180" step="2" value="90" style="flex:1" oninput="updSz('ch',+this.value,'chv')"><span class="sv" id="chv">90</span>px</div>
+          <div style="margin-top:16px">
+            <div class="pl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M2 12h20"></path>
+              </svg>
+              Opacidade Conector
+            </div>
+            <div class="szr"><span>Opacidade</span><input type="range" id="casl" min="10" max="100" step="5" value="65" style="flex:1" oninput="updSz('connOpacity',+this.value,'cav')"><span class="sv" id="cav">65</span>%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    Copyright FTEC - Felipe Luz • Timeline Editor Pro v2.0
+  </div>
+</div>
+
+<div id="timelinesModal" class="modal">
+  <div class="modal-content">
+    <h3>📊 Timelines Salvas</h3>
+    <p>Gerencie suas timelines salvas. Clique em uma para carregar.</p>
+    <ul id="timelinesList"></ul>
+    <div class="modal-actions">
+      <button class="tbtn" onclick="closeTimelinesModal()">Cancelar</button>
+      <button class="tbtn primary" onclick="createNewTimeline()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nova Timeline
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="importModal" class="modal">
+  <div class="modal-content">
+    <h3>📥 Importar de Tabela CSV</h3>
+    <p>Formato esperado: <strong>Data,Título,Descrição,Texto Longo (opcional)</strong></p>
+    <textarea id="csvInput" placeholder="2026-01-01,Lançamento do Produto,Primeiro marco importante,Detalhes adicionais...&#10;2026-02-01,Campanha de Marketing,Início da divulgação,Mais informações..."></textarea>
+    <p>Ou faça upload de arquivo:</p>
+    <input type="file" id="uploadFile" accept=".csv" onchange="handleFileUpload(event)">
+    <div class="modal-actions">
+      <button class="tbtn" onclick="closeImportModal()">Cancelar</button>
+      <button class="tbtn primary" onclick="parseCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Importar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js "></script>
+<script>
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+const ns='http://www.w3.org/2000/svg';
+const BASE_W=2000,H=500,LPAD=70,RPAD=50;
+let AY=220,ZOOM=1.0;
+let minDate=new Date('2019-01-01'),maxDate=new Date('2027-01-01');
+const DEF_CW=110,DEF_CH=90;
+const timelines = {};
+let currentTimelineId = 'main';
+let cards = [];
+let sel=null,act=null,mdp=null,drs=false,axDrag=false;
+let rszDir = null;
+let timeUnit = 'days';
+let editors = {};
+
+function getTW(){return Math.round(BASE_W*ZOOM);}
+function getAXLEN(){return getTW()-LPAD-RPAD;}
+function getAx(d){const t=new Date(d).getTime();return LPAD+(t-minDate.getTime())/(maxDate.getTime()-minDate.getTime())*getAXLEN();}
+function getYears(){const y0=minDate.getFullYear(),y1=maxDate.getFullYear(),ys=[];for(let y=y0;y<=y1;y++)ys.push(y);return ys;}
+
+const SH=[
+  {id:'rounded',t:'Arredondado',sv:'<rect x="2" y="7" width="24" height="14" rx="4"/>'},
+  {id:'rect',t:'Retângulo',sv:'<rect x="2" y="7" width="24" height="14"/>'},
+  {id:'circle',t:'Círculo',sv:'<circle cx="14" cy="14" r="11"/>'},
+  {id:'diamond',t:'Diamante',sv:'<polygon points="14,2 26,14 14,26 2,14"/>'},
+  {id:'hexagon',t:'Hexágono',sv:'<polygon points="14,3 24,8.5 24,19.5 14,25 4,19.5 4,8.5"/>'},
+  {id:'pill',t:'Pílula',sv:'<rect x="2" y="8" width="24" height="12" rx="6"/>'},
+  {id:'triangle',t:'Triângulo',sv:'<polygon points="14,2 26,24 2,24"/>'},
+  {id:'star',t:'Estrela',sv:'<path d="M14,2 L16.5,10 L25,10 L18,15 L20.5,23 L14,18 L7.5,23 L10,15 L3,10 L11.5,10 Z"/>'},
+  {id:'heart',t:'Coração',sv:'<path d="M14,21 C7,14 2,10 2,6 C2,4 4,2 6,2 C8,2 10,4 10,6 C10,8 12,10 14,12 C16,10 18,8 18,6 C18,4 20,2 22,2 C24,2 26,4 26,6 C26,10 21,14 14,21 Z"/>'},
+];
+const CN=[
+  {id:'dashed',t:'Tracejado',sv:'<line x1="14" y1="2" x2="14" y2="26" stroke-dasharray="3 2"/>'},
+  {id:'solid',t:'Sólido',sv:'<line x1="14" y1="2" x2="14" y2="26"/>'},
+  {id:'dotted',t:'Pontilhado',sv:'<line x1="14" y1="2" x2="14" y2="26" stroke-dasharray="1 4"/>'},
+  {id:'curved',t:'Curvo',sv:'<path d="M9 2 C9 14,19 14,19 26" fill="none"/>'},
+  {id:'elbow',t:'Joelho (L)',sv:'<path d="M9 2 L9 14 L19 14 L19 26" fill="none"/>'},
+  {id:'none',t:'Sem conector',sv:'<line x1="5" y1="5" x2="23" y2="23" opacity=".5"/><line x1="23" y1="5" x2="5" y2="23" opacity=".5"/>'},
+];
+
+function mkBtns(arr,cid,prop){
+  const c=document.getElementById(cid);
+  c.innerHTML = '';
+  arr.forEach(x=>{
+    const b=document.createElement('button');
+    b.className='ib';
+    b.id=cid+'-'+x.id;
+    b.title=x.t;
+    b.innerHTML=`<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5">${x.sv}</svg>`;
+    b.onclick=()=>{upd(prop,x.id);hlB(cid,arr,x.id);};
+    c.appendChild(b);
+  });
+}
+function hlB(cid,arr,id){arr.forEach(x=>{const b=document.getElementById(cid+'-'+x.id);if(b)b.classList.toggle('on',x.id===id);});}
+mkBtns(SH,'sbg','shape');mkBtns(CN,'cbg','connType');
+
+function rrP(x,y,w,h,r){ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+
+function bShape(cx,cy,sh,cw,ch){
+  const r2=Math.min(cw,ch)/2;ctx.beginPath();
+  if(sh==='rounded')rrP(cx-cw/2,cy-ch/2,cw,ch,8);
+  else if(sh==='rect')ctx.rect(cx-cw/2,cy-ch/2,cw,ch);
+  else if(sh==='circle')ctx.arc(cx,cy,r2,0,Math.PI*2);
+  else if(sh==='diamond'){ctx.moveTo(cx,cy-r2);ctx.lineTo(cx+cw/2,cy);ctx.lineTo(cx,cy+r2);ctx.lineTo(cx-cw/2,cy);ctx.closePath();}
+  else if(sh==='hexagon'){for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);i===0?ctx.moveTo(cx+r2*Math.cos(a),cy+r2*Math.sin(a)):ctx.lineTo(cx+r2*Math.cos(a),cy+r2*Math.sin(a));}ctx.closePath();}
+  else if(sh==='triangle'){ctx.moveTo(cx,cy-r2);ctx.lineTo(cx+cw/2,cy+r2);ctx.lineTo(cx-cw/2,cy+r2);ctx.closePath();}
+  else if(sh==='star'){
+    const points = [
+      {x:0,y:-1}, {x:0.2245,y:-0.309}, {x:0.951,y:-0.309}, {x:0.363,y:0.118}, {x:0.588,y:0.809},
+      {x:0,y:0.382}, {x:-0.588,y:0.809}, {x:-0.363,y:0.118}, {x:-0.951,y:-0.309}, {x:-0.2245,y:-0.309}
+    ];
+    ctx.moveTo(cx + points[0].x * r2, cy + points[0].y * r2);
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(cx + points[i].x * r2, cy + points[i].y * r2);
+    }
+    ctx.closePath();
+  } else if(sh==='heart'){
+    const w = cw, h = ch;
+    ctx.moveTo(cx, cy + h/2 - h/10);
+    ctx.bezierCurveTo(
+      cx - w/4, cy - h/2, 
+      cx - w/2, cy - h/4, 
+      cx, cy + h/4
+    );
+    ctx.bezierCurveTo(
+      cx + w/2, cy - h/4, 
+      cx + w/4, cy - h/2, 
+      cx, cy + h/2 - h/10
+    );
+    ctx.closePath();
+  }
+  else rrP(cx-cw/2,cy-ch/2,cw,ch,ch/2);
+}
+
+function cEdge(c){
+  const{cx,cy,cw,ch,shape}=c,ab=cy<AY,r2=Math.min(cw,ch)/2;
+  if(['circle','hexagon','diamond', 'star', 'heart'].includes(shape))return{x:cx,y:ab?cy+r2:cy-r2};
+  return{x:cx,y:ab?cy+ch/2:cy-ch/2};
+}
+
+function wt(str,mx){const ws=str.split(' ');const ln=[];let cur='';ws.forEach(w=>{const n=(cur?cur+' ':'')+w;if(n.length<=mx)cur=n;else{if(cur)ln.push(cur);cur=w;}});if(cur)ln.push(cur);return ln.slice(0,2);}
+
+function drawConn(c){
+  if(c.connType==='none')return;
+  const ax=getAx(c.ev.d),ep=cEdge(c),axY=c.cy<AY?AY-5:AY+5,my=(axY+ep.y)/2;
+  ctx.strokeStyle=c.connColor;ctx.lineWidth=1.3;ctx.globalAlpha=(c.connOpacity||65)/100;ctx.beginPath();ctx.moveTo(ax,axY);
+  if(c.connType==='curved'){ctx.setLineDash([]);ctx.bezierCurveTo(ax,my,ep.x,my,ep.x,ep.y);}
+  else if(c.connType==='elbow'){ctx.setLineDash([]);ctx.lineTo(ax,my);ctx.lineTo(ep.x,my);ctx.lineTo(ep.x,ep.y);}
+  else{ctx.setLineDash(c.connType==='dashed'?[3,3]:c.connType==='dotted'?[1,4]:[]);ctx.lineTo(ep.x,ep.y);}
+  ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+}
+
+function drawDot(c){
+  const ax=getAx(c.ev.d);
+  ctx.beginPath();ctx.arc(ax,AY,5,0,Math.PI*2);ctx.fillStyle=c.fillColor;ctx.fill();ctx.strokeStyle=c.strokeColor;ctx.lineWidth=1.5;ctx.stroke();
+}
+
+function drawCard(c,isSel,shadow){
+  const{cx,cy,cw,ch,shape,fillColor,strokeColor,textColor,ev}=c;
+  if(shadow){ctx.save();ctx.shadowColor='rgba(0,0,0,0.2)';ctx.shadowBlur=18;ctx.shadowOffsetY=5;bShape(cx,cy,shape,cw,ch);ctx.fillStyle=fillColor;ctx.fill();ctx.restore();}
+  bShape(cx,cy,shape,cw,ch);ctx.fillStyle=fillColor;ctx.fill();
+  ctx.strokeStyle=strokeColor;ctx.lineWidth=isSel?2.5:0.8;ctx.stroke();
+  if(isSel){bShape(cx,cy,shape,cw,ch);ctx.save();ctx.strokeStyle=strokeColor;ctx.lineWidth=9;ctx.globalAlpha=0.1;ctx.stroke();ctx.restore();}
+  const ty=cy-ch/2,dp=ev.d.split('-');
+  ctx.font='bold 9px Arial,sans-serif';ctx.fillStyle=textColor;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(`${dp[2]}/${dp[1]}/${dp[0]}`,cx,ty+11);
+  ctx.strokeStyle=strokeColor;ctx.lineWidth=0.5;ctx.globalAlpha=0.25;
+  ctx.beginPath();ctx.moveTo(cx-cw/2+6,ty+20);ctx.lineTo(cx+cw/2-6,ty+20);ctx.stroke();ctx.globalAlpha=1;
+  const ml=Math.max(8,Math.floor(cw/8.5));
+  ctx.font='bold 11px Arial,sans-serif';ctx.fillStyle=textColor;ctx.textAlign='center';ctx.textBaseline='middle';
+  wt(ev.l,ml).forEach((ln,li)=>ctx.fillText(ln,cx,ty+33+li*13));
+  const ms=Math.max(10,Math.floor(cw/7)),sl=wt(ev.s,ms);
+  ctx.font='9px Arial,sans-serif';ctx.fillStyle=textColor;ctx.globalAlpha=0.88;
+  const sy=ty+ch-18+(sl.length===1?5:0);
+  sl.forEach((ln,li)=>ctx.fillText(ln,cx,sy+li*11));ctx.globalAlpha=1;
+}
+
+function draw(){
+  const TW=getTW();
+  cv.width=TW;cv.height=H;cv.style.width=TW+'px';cv.style.height=H+'px';
+  ctx.clearRect(0,0,TW,H);
+  ctx.beginPath();rrP(LPAD,AY-1,getAXLEN(),2,1);ctx.fillStyle='#b4b2a9';ctx.fill();
+  if(axDrag){ctx.strokeStyle='#185FA5';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.globalAlpha=0.4;ctx.beginPath();ctx.moveTo(LPAD,AY);ctx.lineTo(LPAD+getAXLEN(),AY);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;}
+  
+  if(timeUnit === 'days') {
+    getYears().forEach(y=>{
+      const x=Math.round(getAx(`${y}-01-01`));
+      if(x<LPAD-10||x>TW-RPAD+10)return;
+      ctx.strokeStyle='#888780';ctx.lineWidth=1.5;ctx.setLineDash([]);
+      ctx.beginPath();ctx.moveTo(x,AY-7);ctx.lineTo(x,AY+7);ctx.stroke();
+      ctx.font='bold 11px Arial,sans-serif';ctx.fillStyle='#888780';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(`${y}`,x,AY+20);
+    });
+  } else if(timeUnit === 'months') {
+    const startYear = minDate.getFullYear();
+    const endYear = maxDate.getFullYear();
+    for(let y = startYear; y <= endYear; y++) {
+      for(let m = 0; m < 12; m++) {
+        const date = new Date(y, m, 1);
+        if(date < minDate || date > maxDate) continue;
+        const x = Math.round(getAx(date.toISOString().split('T')[0]));
+        if(x < LPAD-10 || x > TW-RPAD+10) continue;
+        ctx.strokeStyle='#888780';ctx.lineWidth=1.2;ctx.setLineDash([]);
+        ctx.beginPath();ctx.moveTo(x,AY-5);ctx.lineTo(x,AY+5);ctx.stroke();
+        ctx.font='9px Arial,sans-serif';ctx.fillStyle='#888780';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(`${String(m+1).padStart(2,'0')}/${y.toString().substr(-2)}`,x,AY+15);
+      }
+    }
+  } else if(timeUnit === 'bimonthly') {
+    const startYear = minDate.getFullYear();
+    const endYear = maxDate.getFullYear();
+    for(let y = startYear; y <= endYear; y++) {
+      for(let b = 0; b < 6; b++) {
+        const month = b * 2;
+        const date = new Date(y, month, 1);
+        if(date < minDate || date > maxDate) continue;
+        const x = Math.round(getAx(date.toISOString().split('T')[0]));
+        if(x < LPAD-10 || x > TW-RPAD+10) continue;
+        ctx.strokeStyle='#888780';ctx.lineWidth=1.2;ctx.setLineDash([]);
+        ctx.beginPath();ctx.moveTo(x,AY-5);ctx.lineTo(x,AY+5);ctx.stroke();
+        ctx.font='9px Arial,sans-serif';ctx.fillStyle='#888780';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(`${month+1}-${month+2}/${y.toString().substr(-2)}`,x,AY+15);
+      }
+    }
+  }
+  
+  if(cards.length===0){
+    ctx.font='13px Arial,sans-serif';ctx.fillStyle='#c8c7bf';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Clique em "+ Novo card" para começar a construir sua timeline',TW/2,AY<H/2?AY+80:AY-80);
+  }
+  const drag=cards.find(c=>c.dragging);
+  cards.forEach(c=>{if(!c.dragging)drawConn(c);});if(drag)drawConn(drag);
+  cards.forEach(c=>{if(!c.dragging)drawDot(c);});if(drag)drawDot(drag);
+  cards.forEach(c=>{if(c!==sel&&!c.dragging)drawCard(c,false,false);});
+  if(sel&&!sel.dragging)drawCard(sel,true,false);
+  if(drag)drawCard(drag,drag===sel,true);
+}
+
+function gP(e){const r=cv.getBoundingClientRect(),t=e.touches&&e.touches[0];return{x:(t?t.clientX:e.clientX)-r.left,y:(t?t.clientY:e.clientY)-r.top};}
+
+function hitC(x,y){
+    for(let i=cards.length-1;i>=0;i--){
+        const c=cards[i],{cw,ch}=c;
+        if(x>=c.cx-cw/2 && x<=c.cx+cw/2 && y>=c.cy-ch/2 && y<=c.cy+ch/2){
+            if (Math.abs(x - (c.cx - cw/2)) <= 5) {
+                return {card: c, resize: 'w'};
+            } else if (Math.abs(x - (c.cx + cw/2)) <= 5) {
+                return {card: c, resize: 'e'};
+            } else if (Math.abs(y - (c.cy - ch/2)) <= 5) {
+                return {card: c, resize: 'n'};
+            } else if (Math.abs(y - (c.cy + ch/2)) <= 5) {
+                return {card: c, resize: 's'};
+            }
+            return {card: c, resize: false};
+        }
+    }
+    return null;
+}
+
+function nearAxis(y){return Math.abs(y-AY)<10;}
+
+cv.addEventListener('mousedown',e=>{
+  const p=gP(e), h=hitC(p.x,p.y);
+  if(h && h.resize) {
+    act = h.card;
+    mdp = p;
+    rszDir = h.resize;
+    drs = true;
+    act.dragging = true;
+    if(rszDir === 'w' || rszDir === 'e') cv.style.cursor = 'ew-resize';
+    else if(rszDir === 'n' || rszDir === 's') cv.style.cursor = 'ns-resize';
+  } else if(h && h.card) {
+    act=h.card;mdp=p;drs=false;act.ox=p.x-act.cx;act.oy=p.y-act.cy;
+  }
+  else if(nearAxis(p.y)){axDrag=true;document.getElementById('scr').style.cursor='ns-resize';draw();}
+  else desel();
+});
+
+cv.addEventListener('mousemove',e=>{
+  const p=gP(e);
+  if(act && act.dragging && rszDir) {
+    if(rszDir === 'w' || rszDir === 'e') {
+        const dx = rszDir === 'w' ? mdp.x - p.x : p.x - mdp.x;
+        const newW = Math.max(60, act.cw + dx);
+        act.cw = newW;
+        if(rszDir === 'w') act.cx += dx / 2;
+        document.getElementById('cwsl').value = newW;
+        document.getElementById('cwv').textContent = newW;
+    }
+    if(rszDir === 'n' || rszDir === 's') {
+        const dy = rszDir === 'n' ? mdp.y - p.y : p.y - mdp.y;
+        const newH = Math.max(50, act.ch + dy);
+        act.ch = newH;
+        if(rszDir === 'n') act.cy += dy / 2;
+        document.getElementById('chsl').value = newH;
+        document.getElementById('chv').textContent = newH;
+    }
+    mdp = p;
+    draw();
+    return;
+  }
+  
+  if(act&&!drs&&Math.hypot(p.x-mdp.x,p.y-mdp.y)>5){drs=true;act.dragging=true;cv.style.cursor='grabbing';}
+  if(act&&act.dragging && !rszDir){act.cx=p.x-act.ox;act.cy=p.y-act.oy;draw();return;}
+  if(axDrag){AY=Math.round(Math.min(440,Math.max(60,p.y)));document.getElementById('aysl').value=AY;document.getElementById('ayv').textContent=AY;draw();return;}
+  
+  const h = hitC(p.x, p.y);
+  if(h && h.resize) {
+    if(h.resize === 'w' || h.resize === 'e') cv.style.cursor = 'ew-resize';
+    else if(h.resize === 'n' || h.resize === 's') cv.style.cursor = 'ns-resize';
+  } else {
+    cv.style.cursor=hitC(p.x,p.y)?'grab':nearAxis(p.y)?'ns-resize':'default';
+  }
+});
+
+window.addEventListener('mouseup',()=>{
+  if(act){
+    if(!drs && !rszDir) selCard(act);
+    act.dragging=false;
+    drs=false;
+    rszDir = null;
+    act=null;
+    draw();
+  }
+  if(axDrag){axDrag=false;document.getElementById('scr').style.cursor='default';draw();}
+});
+
+cv.addEventListener('touchstart',e=>{
+  const p=gP(e), h=hitC(p.x,p.y);
+  if(h && h.card){
+    act=h.card;mdp=p;drs=false;act.ox=p.x-act.cx;act.oy=p.y-act.cy;e.preventDefault();
+  }
+  else if(nearAxis(p.y)){axDrag=true;e.preventDefault();}
+},{passive:false});
+
+cv.addEventListener('touchmove',e=>{
+  if(act){
+    const p=gP(e);
+    if(!drs&&Math.hypot(p.x-mdp.x,p.y-mdp.y)>5){drs=true;act.dragging=true;}
+    if(act.dragging){act.cx=p.x-act.ox;act.cy=p.y-act.oy;draw();}
+    e.preventDefault();
+  }
+  if(axDrag){
+    const p=gP(e);
+    AY=Math.round(Math.min(440,Math.max(60,p.y)));
+    document.getElementById('aysl').value=AY;
+    document.getElementById('ayv').textContent=AY;
+    draw();
+    e.preventDefault();
+  }
+},{passive:false});
+
+window.addEventListener('touchend',()=>{
+    if(act){
+        act.dragging=false;
+        drs=false;
+        rszDir = null;
+        act=null;
+        draw();
+    }
+    axDrag=false;
+});
+
+document.addEventListener('keydown',e=>{
+  if((e.key==='Delete'||e.key==='Backspace')&&sel&&document.activeElement.tagName!=='INPUT'&& document.activeElement.tagName !== 'TEXTAREA')delCard();
+  if(e.key==='Escape')desel();
+});
+
+function selCard(c){
+  sel=c;
+  document.getElementById('nsel').style.display='none';
+  document.getElementById('edt').style.display='block';
+  document.getElementById('eid').value = c.id;
+  document.getElementById('fc').value=c.fillColor;
+  document.getElementById('sc').value=c.strokeColor;
+  document.getElementById('tc').value=c.textColor;
+  document.getElementById('cc').value=c.connColor;
+  document.getElementById('ed').value=c.ev.d;
+  document.getElementById('el').value=c.ev.l;
+  document.getElementById('es').value=c.ev.s;
+  document.getElementById('et').value=c.ev.t || '';
+  document.getElementById('cwsl').value=c.cw;
+  document.getElementById('chsl').value=c.ch;
+  document.getElementById('casl').value=c.connOpacity||65;
+  document.getElementById('cwv').textContent=c.cw;
+  document.getElementById('chv').textContent=c.ch;
+  document.getElementById('cav').textContent=c.connOpacity||65;
+  hlB('sbg',SH,c.shape);hlB('cbg',CN,c.connType);draw();
+}
+function desel(){sel=null;document.getElementById('nsel').style.display='block';document.getElementById('edt').style.display='none';draw();}
+function delCard(){if(!sel)return;cards.splice(cards.indexOf(sel),1);desel();}
+function upd(k,v,t){if(!sel)return;if(t==='ev')sel.ev[k]=v;else sel[k]=v;draw();}
+function updDate(v){if(!sel)return;sel.ev.d=v;draw();}
+function updSz(k,v,vid){if(!sel)return;sel[k]=v;document.getElementById(vid).textContent=v;draw();}
+
+function generateId() {
+    return 'TL_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function addCard(){
+  const today=new Date().toISOString().split('T')[0];
+  const ab=cards.length%2===0,TW=getTW();
+  let cx=getAx(today);
+  if(isNaN(cx)||cx<LPAD||cx>TW-RPAD)cx=TW/2;
+  const nc={
+    id: generateId(),
+    ev:{d:today,l:'Novo evento',s:'Descrição', t:''},
+    cx,cy:ab?AY-65:AY+65,cw:DEF_CW,ch:DEF_CH,
+    shape:'rounded',connType:'dashed',connOpacity:65,
+    fillColor:'#E6F1FB',strokeColor:'#185FA5',textColor:'#042C53',connColor:'#185FA5',
+    dragging:false,ox:0,oy:0
+  };
+  cards.push(nc);selCard(nc);
+}
+
+function updTL(){
+  const v0=document.getElementById('md0').value,v1=document.getElementById('md1').value;
+  if(v0&&v1&&v0<v1){minDate=new Date(v0);maxDate=new Date(v1);draw();}
+}
+function updZoom(v){ZOOM=v;document.getElementById('zmv').textContent=v.toFixed(1)+'×';draw();}
+function updAY(v){AY=v;document.getElementById('ayv').textContent=v;draw();}
+function updTimeUnit(v) { timeUnit = v; draw(); }
+
+function saveTimeline(id) {
+    timelines[id] = JSON.parse(JSON.stringify(cards));
+}
+
+function loadTimeline(id) {
+    if (timelines[id]) {
+        cards = JSON.parse(JSON.stringify(timelines[id]));
+        draw();
+        desel();
+    }
+}
+
+function createNewTimeline() {
+    const id = 'timeline_' + Date.now();
+    saveTimeline(currentTimelineId);
+    currentTimelineId = id;
+    cards = [];
+    draw();
+    desel();
+    alert(`Nova timeline criada com ID: ${id}`);
+}
+
+function createTimelineFromCard() {
+    if (!sel) {
+        alert("Selecione um card primeiro.");
+        return;
+    }
+
+    const id = 'sub_timeline_' + Date.now();
+    saveTimeline(currentTimelineId);
+
+    const newCard = JSON.parse(JSON.stringify(sel));
+    newCard.cx = getAx(newCard.ev.d);
+    newCard.cy = AY + 65;
+    cards = [newCard];
+    currentTimelineId = id;
+    draw();
+    desel();
+    alert(`Sub-timeline criada a partir do card com ID: ${id}`);
+}
+
+function showTimelines() {
+    saveTimeline(currentTimelineId);
+    const modal = document.getElementById('timelinesModal');
+    const list = document.getElementById('timelinesList');
+    list.innerHTML = '';
+
+    for (const id in timelines) {
+        const li = document.createElement('li');
+        li.textContent = `ID: ${id}`;
+        li.onclick = () => {
+            loadTimeline(id);
+            currentTimelineId = id;
+            modal.style.display = 'none';
+        };
+        list.appendChild(li);
+    }
+
+    modal.style.display = 'flex';
+}
+
+function closeTimelinesModal() {
+    document.getElementById('timelinesModal').style.display = 'none';
+}
+
+function importFromTable() {
+    document.getElementById('csvInput').value = '';
+    document.getElementById('uploadFile').value = '';
+    document.getElementById('importModal').style.display = 'flex';
+}
+
+function closeImportModal() {
+    document.getElementById('importModal').style.display = 'none';
+}
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('csvInput').value = e.target.result;
+    };
+    reader.readAsText(file);
+}
+
+function parseCSV() {
+    const csvText = document.getElementById('csvInput').value;
+    const lines = csvText.split('\n').filter(line => line.trim() !== '');
+    if (lines.length === 0) return;
+
+    lines.forEach(line => {
+        const parts = line.split(',').map(part => part.trim());
+        if (parts.length >= 3) {
+            const [date, title, desc, text = ''] = parts;
+            const today = date;
+            const ab = cards.length % 2 === 0;
+            const TW = getTW();
+            let cx = getAx(today);
+            if (isNaN(cx) || cx < LPAD || cx > TW - RPAD) cx = TW / 2;
+
+            const nc = {
+                id: generateId(),
+                ev: { d: today, l: title, s: desc, t: text },
+                cx, cy: ab ? AY - 65 : AY + 65, cw: DEF_CW, ch: DEF_CH,
+                shape: 'rounded', connType: 'dashed', connOpacity: 65,
+                fillColor: '#E6F1FB', strokeColor: '#185FA5', textColor: '#042C53', connColor: '#185FA5',
+                dragging: false, ox: 0, oy: 0
+            };
+            cards.push(nc);
+        }
+    });
+
+    draw();
+    desel();
+    closeImportModal();
+}
+
+function svgShape(se,cx,cy,sh,cw,ch,fill,stroke){
+  const st=`fill:${fill};stroke:${stroke};stroke-width:0.8`,r2=Math.min(cw,ch)/2;
+  if(sh==='rounded')return se('rect',{x:cx-cw/2,y:cy-ch/2,width:cw,height:ch,rx:8},st);
+  if(sh==='rect')return se('rect',{x:cx-cw/2,y:cy-ch/2,width:cw,height:ch},st);
+  if(sh==='circle')return se('circle',{cx,cy,r:r2},st);
+  if(sh==='diamond')return se('polygon',{points:`${cx},${cy-r2} ${cx+cw/2},${cy} ${cx},${cy+r2} ${cx-cw/2},${cy}`},st);
+  if(sh==='hexagon'){const pts=[...Array(6)].map((_,i)=>{const a=Math.PI/180*(60*i-30);return`${(cx+r2*Math.cos(a)).toFixed(1)},${(cy+r2*Math.sin(a)).toFixed(1)}`;}).join(' ');return se('polygon',{points:pts},st);}
+  if(sh==='triangle')return se('polygon',{points:`${cx},${cy-r2} ${cx+cw/2},${cy+r2} ${cx-cw/2},${cy+r2}`},st);
+  if(sh==='star'){
+    const points = [
+      {x:0,y:-1}, {x:0.2245,y:-0.309}, {x:0.951,y:-0.309}, {x:0.363,y:0.118}, {x:0.588,y:0.809},
+      {x:0,y:0.382}, {x:-0.588,y:0.809}, {x:-0.363,y:0.118}, {x:-0.951,y:-0.309}, {x:-0.2245,y:-0.309}
+    ];
+    const pathData = points.map((p, i) => `${i===0?'M':'L'}${cx+p.x*r2} ${cy+p.y*r2}`).join(' ') + ' Z';
+    return se('path',{d:pathData},st);
+  }
+  if(sh==='heart'){
+    const w = cw, h = ch;
+    const pathData = `M${cx} ${cy+h/2-h/10} C${cx-w/4} ${cy-h/2}, ${cx-w/2} ${cy-h/4}, ${cx} ${cy+h/4} C${cx+w/2} ${cy-h/4}, ${cx+w/4} ${cy-h/2}, ${cx} ${cy+h/2-h/10}`;
+    return se('path',{d:pathData},st);
+  }
+  return se('rect',{x:cx-cw/2,y:cy-ch/2,width:cw,height:ch,rx:ch/2},st);
+}
+
+function exportSVG(){
+  const TW=getTW();
+  const svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('xmlns',ns);svg.setAttribute('width',TW);svg.setAttribute('height',H);svg.setAttribute('viewBox',`0 0 ${TW} ${H}`);
+  const se=(t,a,s)=>{const e=document.createElementNS(ns,t);Object.entries(a||{}).forEach(([k,v])=>e.setAttribute(k,v));if(s)e.setAttribute('style',s);return e;};
+  const st=(x,y,txt,sty)=>{const e=se('text',{x,y,'text-anchor':'middle','dominant-baseline':'central'},`font-family:Arial,sans-serif;${sty||''}`);e.textContent=txt;return e;};
+  svg.appendChild(se('rect',{x:LPAD,y:AY-1,width:getAXLEN(),height:2,rx:1},'fill:#b4b2a9'));
+  
+  if(timeUnit === 'days') {
+    getYears().forEach(y=>{
+      const x=Math.round(getAx(`${y}-01-01`));
+      if(x<LPAD-10||x>TW-RPAD+10)return;
+      svg.appendChild(se('line',{x1:x,x2:x,y1:AY-7,y2:AY+7},'stroke:#888780;stroke-width:1.5'));
+      svg.appendChild(st(x,AY+20,`${y}`,'font-size:11px;font-weight:bold;fill:#888780'));
+    });
+  } else if(timeUnit === 'months') {
+    const startYear = minDate.getFullYear();
+    const endYear = maxDate.getFullYear();
+    for(let y = startYear; y <= endYear; y++) {
+      for(let m = 0; m < 12; m++) {
+        const date = new Date(y, m, 1);
+        if(date < minDate || date > maxDate) continue;
+        const x = Math.round(getAx(date.toISOString().split('T')[0]));
+        if(x < LPAD-10 || x > TW-RPAD+10) continue;
+        svg.appendChild(se('line',{x1:x,x2:x,y1:AY-5,y2:AY+5},'stroke:#888780;stroke-width:1.2'));
+        svg.appendChild(st(x,AY+15,`${String(m+1).padStart(2,'0')}/${y.toString().substr(-2)}`,'font-size:9px;fill:#888780'));
+      }
+    }
+  } else if(timeUnit === 'bimonthly') {
+    const startYear = minDate.getFullYear();
+    const endYear = maxDate.getFullYear();
+    for(let y = startYear; y <= endYear; y++) {
+      for(let b = 0; b < 6; b++) {
+        const month = b * 2;
+        const date = new Date(y, month, 1);
+        if(date < minDate || date > maxDate) continue;
+        const x = Math.round(getAx(date.toISOString().split('T')[0]));
+        if(x < LPAD-10 || x > TW-RPAD+10) continue;
+        svg.appendChild(se('line',{x1:x,x2:x,y1:AY-5,y2:AY+5},'stroke:#888780;stroke-width:1.2'));
+        svg.appendChild(st(x,AY+15,`${month+1}-${month+2}/${y.toString().substr(-2)}`,'font-size:9px;fill:#888780'));
+      }
+    }
+  }
+  
+  cards.forEach(c=>{
+    const{cx,cy,cw,ch,shape,fillColor,strokeColor,textColor,connType,connColor,connOpacity,ev}=c;
+    const ax=getAx(ev.d),ep=cEdge(c),axY=cy<AY?AY-5:AY+5,my=(axY+ep.y)/2,opa=(connOpacity||65)/100;
+    if(connType!=='none'){
+      const cs=`stroke:${connColor};stroke-width:1.3;fill:none;opacity:${opa}`;
+      if(connType==='curved')svg.appendChild(se('path',{d:`M${ax} ${axY} C${ax} ${my},${ep.x} ${my},${ep.x} ${ep.y}`},cs));
+      else if(connType==='elbow')svg.appendChild(se('path',{d:`M${ax} ${axY} L${ax} ${my} L${ep.x} ${my} L${ep.x} ${ep.y}`},cs));
+      else{const da=connType==='dashed'?';stroke-dasharray:3 3':connType==='dotted'?';stroke-dasharray:1 4':'';svg.appendChild(se('line',{x1:ax,y1:axY,x2:ep.x,y2:ep.y},cs+da));}
+    }
+    svg.appendChild(se('circle',{cx:ax,cy:AY,r:5},`fill:${fillColor};stroke:${strokeColor};stroke-width:1.5`));
+    const g=document.createElementNS(ns,'g');
+    g.appendChild(svgShape(se,cx,cy,shape,cw,ch,fillColor,strokeColor));
+    const ty=cy-ch/2,dp=ev.d.split('-');
+    g.appendChild(st(cx,ty+11,`${dp[2]}/${dp[1]}/${dp[0]}`,`font-size:9px;font-weight:bold;fill:${textColor}`));
+    g.appendChild(se('line',{x1:cx-cw/2+6,x2:cx+cw/2-6,y1:ty+20,y2:ty+20},`stroke:${strokeColor};stroke-width:0.5;opacity:0.25`));
+    const ml=Math.max(8,Math.floor(cw/8.5));
+    wt(ev.l,ml).forEach((ln,li)=>g.appendChild(st(cx,ty+33+li*13,ln,`font-size:11px;font-weight:bold;fill:${textColor}`)));
+    const ms=Math.max(10,Math.floor(cw/7)),sl=wt(ev.s,ms),sy=ty+ch-18+(sl.length===1?5:0);
+    sl.forEach((ln,li)=>g.appendChild(st(cx,sy+li*11,ln,`font-size:9px;fill:${textColor};opacity:0.88`)));
+    svg.appendChild(g);
+  });
+  const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='timeline.svg';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+saveTimeline(currentTimelineId);
+draw();
+</script>
 </body>
 </html>
