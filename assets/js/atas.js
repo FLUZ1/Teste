@@ -6,14 +6,14 @@ function initializeAtasPage() {
     const applyFiltersBtn = document.getElementById('apply-filters-btn');
     const addRowBtn = document.getElementById('add-row-btn'); // Botão para adicionar nova linha
 
-    // URL do arquivo JSON de Atas no Google Drive (download direto)
-    const JSON_URL = 'https://drive.google.com/uc?export=download&id=1pO1_aS2VIDLGPM_CLLVrcGvg2cRrsOLK';
+    // Caminho para o arquivo JSON local
+    const JSON_PATH = 'assets/data/atas.json';
 
-    // Função para carregar e processar dados do JSON
+    // Função para carregar e processar dados do JSON local
     async function loadAtasFromJson() {
         try {
-            console.log("Tentando carregar dados de:", JSON_URL); // Log para debug
-            const response = await fetch(JSON_URL);
+            console.log("Tentando carregar dados de:", JSON_PATH); // Log para debug
+            const response = await fetch(JSON_PATH);
             if (!response.ok) {
                 throw new Error(`Erro ao carregar dados: ${response.status} ${response.statusText}`);
             }
