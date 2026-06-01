@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Obras - Contrapartida Viária Av. do Metrô</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- REMOVIDO: <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script> -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <header>
+        <div class="logo">Gestão de Obras</div>
+        <nav>
+            <ul>
+                <li><a id="nav-home" class="active">Página Principal</a></li>
+                <li><a id="nav-atas">Atas de Reunião</a></li>
+                <li><a id="nav-projeto">Projeto</a></li>
+                <li><a id="nav-planejamento">Planejamento</a></li>
+                <li><a id="nav-riscos">Riscos</a></li>
+                <li><a id="nav-custos">Custos</a></li>
+                <li><a id="nav-gestao-cava">Gestão Cava</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="main-content">
+        <!-- O conteúdo das páginas será carregado aqui dinamicamente -->
+        <section id="landing-page" class="container">
+            <div class="hero">
+                <h1>Sistema de Gestão de Obras</h1>
+                <h2>Contrapartida Viária Avênida do Metrô</h2>
+                <p>
+                    Plataforma centralizada para o monitoramento e gestão de todas as frentes da obra. Navegue pelas guias para aceder a painéis de atas, planejamento, análise de riscos, controle de custos e gestão de cava.
+                </p>
+                <a id="cta-button" class="cta-button">Aceder aos Painéis</a>
+            </div>
+        </section>
+        <!-- As outras páginas (divs) agora estão em arquivos HTML separados -->
+    </main>
+    <footer class="bg-white text-center p-4 mt-8">
+        <p class="text-sm text-gray-600">Sistema de Gestão de Obras © 2025</p>
+    </footer>
+    <div id="descricao-modal-placeholder"></div> <!-- Placeholder para o modal -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/atas.js"></script>
+    <script src="assets/js/planejamento.js"></script>
+    <script src="assets/js/paginas.js"></script>
+</body>
+</html>

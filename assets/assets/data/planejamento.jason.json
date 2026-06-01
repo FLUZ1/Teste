@@ -1,0 +1,25 @@
+[
+  {
+    "ID": "Task0",
+    "NomeTarefa": "Fundação Estaca 01",
+    "Inicio": "2024-11-01",
+    "Termino": "2024-11-10",
+    "Duracao": 10,
+    "Predecessora": "",
+    "Custo": 10000.00,
+    "AvancoReal": 45,
+    "AvancoPlanejado": 50
+  },
+  {
+    "ID": "Task1",
+    "NomeTarefa": "Concretagem Estaca 01",
+    "Inicio": "2024-11-11",
+    "Termino": "2024-11-12",
+    "Duracao": 2,
+    "Predecessora": "Task0",
+    "Custo": 5000.00,
+    "AvancoReal": 15,
+    "AvancoPlanejado": 20
+  }
+  // ... mais itens conforme necessário
+]
